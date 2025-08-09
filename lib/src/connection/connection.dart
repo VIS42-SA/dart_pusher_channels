@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:dart_pusher_channels/src/client/client.dart';
 
-typedef PusherChannelsConnectionOnErrorCallback = void Function(
-  dynamic error,
-  StackTrace trace,
-);
+typedef PusherChannelsConnectionOnErrorCallback =
+    void Function(dynamic error, StackTrace trace);
 
 typedef PusherChannelsConnectionOnEventCallback = void Function(String event);
 

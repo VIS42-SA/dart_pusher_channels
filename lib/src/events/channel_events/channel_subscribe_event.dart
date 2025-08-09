@@ -43,33 +43,28 @@ class ChannelSubscribeEvent
   });
 
   /// Used when an instance of [PublicChannel] is subscribing.
-  const ChannelSubscribeEvent.forPublicChannel({
-    required String channelName,
-  }) : this(
-          channelName: channelName,
-          authKey: null,
-          channelDataEncoded: null,
-        );
+  const ChannelSubscribeEvent.forPublicChannel({required String channelName})
+    : this(channelName: channelName, authKey: null, channelDataEncoded: null);
 
   /// Used when an instance of [PrivateChannel] is subscribing.
   const ChannelSubscribeEvent.forPrivateChannel({
     required String channelName,
     required String authKey,
   }) : this(
-          channelName: channelName,
-          authKey: authKey,
-          channelDataEncoded: null,
-        );
+         channelName: channelName,
+         authKey: authKey,
+         channelDataEncoded: null,
+       );
 
   /// Used when an instance of [PrivateEncryptedChannel] is subscribing.
   const ChannelSubscribeEvent.forPrivateEncryptedChannel({
     required String channelName,
     required String authKey,
   }) : this(
-          channelName: channelName,
-          authKey: authKey,
-          channelDataEncoded: null,
-        );
+         channelName: channelName,
+         authKey: authKey,
+         channelDataEncoded: null,
+       );
 
   /// Used when an instance of [PresenceChannel] is subscribing.
   const ChannelSubscribeEvent.forPresenceChannel({
@@ -77,10 +72,10 @@ class ChannelSubscribeEvent
     required String authKey,
     required String channelDataEncoded,
   }) : this(
-          channelName: channelName,
-          authKey: authKey,
-          channelDataEncoded: channelDataEncoded,
-        );
+         channelName: channelName,
+         authKey: authKey,
+         channelDataEncoded: channelDataEncoded,
+       );
 
   @override
   String getEncoded() {

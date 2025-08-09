@@ -8,7 +8,5 @@ class ChannelTriggerEvent extends PusherChannelsTriggerEvent {
     required TriggerableChannelMixin channel,
     required super.name,
     required super.data,
-  }) : super(
-          channelName: channel.name,
-        );
+  }) : super(channelName: channel.name);
 }

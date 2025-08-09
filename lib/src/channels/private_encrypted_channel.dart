@@ -14,19 +14,18 @@ import 'package:meta/meta.dart';
 import 'package:pinenacl/x25519.dart';
 
 /// A delegate function used for encoding the decrypted message received from the server.
-typedef PrivateEncryptedChannelEventDataEncodeDelegate = String Function(
-  Uint8List bytes,
-);
+typedef PrivateEncryptedChannelEventDataEncodeDelegate =
+    String Function(Uint8List bytes);
 
 class _PusherChannelsDecryptionException implements PusherChannelsException {
   @override
   final String message;
 
   const _PusherChannelsDecryptionException.nonceOrCiphertextNull()
-      : message = 'Received nonce or ciphertext is null';
+    : message = 'Received nonce or ciphertext is null';
 
   const _PusherChannelsDecryptionException.decryptionFailed()
-      : message = 'Failed to decrypt the event';
+    : message = 'Failed to decrypt the event';
 }
 
 extension _ChannelReadEventExtension on PusherChannelsReadEvent {
@@ -51,17 +50,11 @@ extension _ChannelReadEventExtension on PusherChannelsReadEvent {
       final nonce = base64Decode(nonceString);
       final ciphertext = base64Decode(ciphertextString);
       final secretBox = SecretBox(key);
-      final decrypted = secretBox.decrypt(
-        ByteList(ciphertext),
-        nonce: nonce,
-      );
+      final decrypted = secretBox.decrypt(ByteList(ciphertext), nonce: nonce);
       final plaintext = encodeDelegate(decrypted);
 
       return PusherChannelsReadEvent(
-        rootObject: {
-          ...rootObject,
-          PusherChannelsEvent.dataKey: plaintext,
-        },
+        rootObject: {...rootObject, PusherChannelsEvent.dataKey: plaintext},
       );
     } catch (exception) {
       throw const _PusherChannelsDecryptionException.decryptionFailed();
@@ -105,19 +98,15 @@ class PrivateEncryptedChannelState implements ChannelState {
   });
 
   const PrivateEncryptedChannelState.initial()
-      : this._(
-          status: ChannelStatus.idle,
-          subscriptionCount: null,
-        );
+    : this._(status: ChannelStatus.idle, subscriptionCount: null);
 
   PrivateEncryptedChannelState copyWith({
     ChannelStatus? status,
     int? subscriptionCount,
-  }) =>
-      PrivateEncryptedChannelState._(
-        status: status ?? this.status,
-        subscriptionCount: subscriptionCount ?? this.subscriptionCount,
-      );
+  }) => PrivateEncryptedChannelState._(
+    status: status ?? this.status,
+    subscriptionCount: subscriptionCount ?? this.subscriptionCount,
+  );
 }
 
 /// **IMPORTANT!** Your server library has to support the encrypted channels
@@ -134,8 +123,12 @@ class PrivateEncryptedChannelState implements ChannelState {
 /// - [EndpointAuthorizableChannelAuthorizationDelegate]
 /// - [PrivateEncryptedChannelAuthorizationData]
 ///
-class PrivateEncryptedChannel extends EndpointAuthorizableChannel<
-    PrivateEncryptedChannelState, PrivateEncryptedChannelAuthorizationData> {
+class PrivateEncryptedChannel
+    extends
+        EndpointAuthorizableChannel<
+          PrivateEncryptedChannelState,
+          PrivateEncryptedChannelAuthorizationData
+        > {
   /// Used to encode the decrypted message.
   final PrivateEncryptedChannelEventDataEncodeDelegate eventDataEncodeDelegate;
 
@@ -144,7 +137,9 @@ class PrivateEncryptedChannel extends EndpointAuthorizableChannel<
 
   @override
   final EndpointAuthorizableChannelAuthorizationDelegate<
-      PrivateEncryptedChannelAuthorizationData> authorizationDelegate;
+    PrivateEncryptedChannelAuthorizationData
+  >
+  authorizationDelegate;
 
   @override
   final ChannelPublicEventEmitter publicEventEmitter;
@@ -195,27 +190,18 @@ class PrivateEncryptedChannel extends EndpointAuthorizableChannel<
   /// Sends the unsubscription event through the [connectionDelegate].
   @override
   void unsubscribe() {
-    connectionDelegate.sendEvent(
-      ChannelUnsubscribeEvent(
-        channelName: name,
-      ),
-    );
+    connectionDelegate.sendEvent(ChannelUnsubscribeEvent(channelName: name));
     super.unsubscribe();
   }
 
   @override
   PrivateEncryptedChannelState getStateWithNewStatus(ChannelStatus status) =>
-      _stateIfNull().copyWith(
-        status: status,
-      );
+      _stateIfNull().copyWith(status: status);
 
   @override
   PrivateEncryptedChannelState getStateWithNewSubscriptionCount(
     int? subscriptionCount,
-  ) =>
-      _stateIfNull().copyWith(
-        subscriptionCount: subscriptionCount,
-      );
+  ) => _stateIfNull().copyWith(subscriptionCount: subscriptionCount);
 
   /// Emits the event using [publicEventEmitter] if it managed to decrypt the event data successfully.
   @override

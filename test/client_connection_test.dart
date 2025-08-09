@@ -20,18 +20,14 @@ class TestConnection implements PusherChannelsConnection {
     _messageStreamController?.add(
       jsonEncode({
         'event': 'pusher:connection_established',
-        'data': jsonEncode({
-          'socket_id': '123',
-        })
+        'data': jsonEncode({'socket_id': '123'}),
       }),
     );
   }
 
   @visibleForTesting
   void fireException() {
-    _messageStreamController?.addError(
-      Exception('Some exception'),
-    );
+    _messageStreamController?.addError(Exception('Some exception'));
   }
 
   @override
@@ -53,19 +49,17 @@ class TestConnection implements PusherChannelsConnection {
     if (_isClosed) {
       throw Exception('closed');
     }
-    _streamSubscription =
-        (_messageStreamController ??= StreamController()).stream.listen(
-              (event) => _onEvent(
-                event,
-                onEventCallback,
-              ),
-              onDone: () => _onDone(onDoneCallback),
-              onError: (error, trace) => _onError(
-                exception: error,
-                trace: trace,
-                callback: onErrorCallback,
-              ),
-            );
+    _streamSubscription = (_messageStreamController ??= StreamController())
+        .stream
+        .listen(
+          (event) => _onEvent(event, onEventCallback),
+          onDone: () => _onDone(onDoneCallback),
+          onError: (error, trace) => _onError(
+            exception: error,
+            trace: trace,
+            callback: onErrorCallback,
+          ),
+        );
   }
 
   @override
@@ -99,40 +93,31 @@ class TestConnection implements PusherChannelsConnection {
     if (_isClosed) {
       return;
     }
-    callback(
-      exception,
-      trace,
-    );
+    callback(exception, trace);
   }
 }
 
 // Ignoring while testing
 // ignore: long-method
 void main() {
-  group(
-    'TestConnection methods |',
-    () {
-      test(
-        'Throws an error if using after closing',
-        () {
-          final connection = TestConnection();
-          connection.close();
-          dynamic exception;
-          try {
-            connection.connect(
-              onDoneCallback: () {},
-              onErrorCallback: (error, trace) {},
-              onEventCallback: (event) {},
-            );
-          } catch (ex) {
-            exception = ex;
-          }
+  group('TestConnection methods |', () {
+    test('Throws an error if using after closing', () {
+      final connection = TestConnection();
+      connection.close();
+      dynamic exception;
+      try {
+        connection.connect(
+          onDoneCallback: () {},
+          onErrorCallback: (error, trace) {},
+          onEventCallback: (event) {},
+        );
+      } catch (ex) {
+        exception = ex;
+      }
 
-          expect(exception is Exception, true);
-        },
-      );
-    },
-  );
+      expect(exception is Exception, true);
+    });
+  });
   group('Testing pusher channels lifecycle |', () {
     test('Connection is pending until connection is established', () async {
       final client = PusherChannelsClient.custom(
@@ -144,27 +129,18 @@ void main() {
       unawaited(
         expectLater(
           stream,
-          emitsInOrder(
-            [
-              PusherChannelsClientLifeCycleState.pendingConnection,
-              PusherChannelsClientLifeCycleState.disposed,
-              emitsDone,
-            ],
-          ),
+          emitsInOrder([
+            PusherChannelsClientLifeCycleState.pendingConnection,
+            PusherChannelsClientLifeCycleState.disposed,
+            emitsDone,
+          ]),
         ),
       );
-      unawaited(
-        client.connect().then((_) => stopWatch.stop()),
-      );
-      await Future.delayed(
-        const Duration(seconds: 3),
-      );
+      unawaited(client.connect().then((_) => stopWatch.stop()));
+      await Future.delayed(const Duration(seconds: 3));
       client.dispose();
 
-      expect(
-        stopWatch.elapsed.inSeconds,
-        3,
-      );
+      expect(stopWatch.elapsed.inSeconds, 3);
     });
     test(
       'If PusherChannelsConnectionEstablishedEvent fires - connection is established',
@@ -180,14 +156,12 @@ void main() {
         unawaited(
           expectLater(
             stream,
-            emitsInOrder(
-              [
-                PusherChannelsClientLifeCycleState.pendingConnection,
-                PusherChannelsClientLifeCycleState.establishedConnection,
-                PusherChannelsClientLifeCycleState.disposed,
-                emitsDone,
-              ],
-            ),
+            emitsInOrder([
+              PusherChannelsClientLifeCycleState.pendingConnection,
+              PusherChannelsClientLifeCycleState.establishedConnection,
+              PusherChannelsClientLifeCycleState.disposed,
+              emitsDone,
+            ]),
           ),
         );
 
@@ -210,15 +184,13 @@ void main() {
         unawaited(
           expectLater(
             stream,
-            emitsInOrder(
-              [
-                PusherChannelsClientLifeCycleState.pendingConnection,
-                PusherChannelsClientLifeCycleState.establishedConnection,
-                PusherChannelsClientLifeCycleState.connectionError,
-                PusherChannelsClientLifeCycleState.disposed,
-                emitsDone,
-              ],
-            ),
+            emitsInOrder([
+              PusherChannelsClientLifeCycleState.pendingConnection,
+              PusherChannelsClientLifeCycleState.establishedConnection,
+              PusherChannelsClientLifeCycleState.connectionError,
+              PusherChannelsClientLifeCycleState.disposed,
+              emitsDone,
+            ]),
           ),
         );
 
@@ -247,16 +219,14 @@ void main() {
         unawaited(
           expectLater(
             stream,
-            emitsInOrder(
-              [
-                PusherChannelsClientLifeCycleState.pendingConnection,
-                PusherChannelsClientLifeCycleState.establishedConnection,
-                PusherChannelsClientLifeCycleState.connectionError,
-                PusherChannelsClientLifeCycleState.reconnecting,
-                PusherChannelsClientLifeCycleState.disposed,
-                emitsDone,
-              ],
-            ),
+            emitsInOrder([
+              PusherChannelsClientLifeCycleState.pendingConnection,
+              PusherChannelsClientLifeCycleState.establishedConnection,
+              PusherChannelsClientLifeCycleState.connectionError,
+              PusherChannelsClientLifeCycleState.reconnecting,
+              PusherChannelsClientLifeCycleState.disposed,
+              emitsDone,
+            ]),
           ),
         );
 
@@ -281,13 +251,11 @@ void main() {
         unawaited(
           expectLater(
             stream,
-            emitsInOrder(
-              [
-                PusherChannelsClientLifeCycleState.pendingConnection,
-                PusherChannelsClientLifeCycleState.disposed,
-                emitsDone,
-              ],
-            ),
+            emitsInOrder([
+              PusherChannelsClientLifeCycleState.pendingConnection,
+              PusherChannelsClientLifeCycleState.disposed,
+              emitsDone,
+            ]),
           ),
         );
         for (int i = 0; i < 3; i++) {
@@ -310,13 +278,11 @@ void main() {
         unawaited(
           expectLater(
             stream,
-            emitsInOrder(
-              [
-                PusherChannelsClientLifeCycleState.pendingConnection,
-                PusherChannelsClientLifeCycleState.disposed,
-                emitsDone,
-              ],
-            ),
+            emitsInOrder([
+              PusherChannelsClientLifeCycleState.pendingConnection,
+              PusherChannelsClientLifeCycleState.disposed,
+              emitsDone,
+            ]),
           ),
         );
         for (int i = 0; i < 3; i++) {

@@ -17,9 +17,7 @@ import 'package:meta/meta.dart';
 class PrivateChannelAuthorizationData implements EndpointAuthorizationData {
   final String authKey;
 
-  const PrivateChannelAuthorizationData({
-    required this.authKey,
-  });
+  const PrivateChannelAuthorizationData({required this.authKey});
 }
 
 /// A data class representing a state
@@ -39,11 +37,10 @@ class PrivateChannelState implements ChannelState {
   PrivateChannelState copyWith({
     ChannelStatus? status,
     int? subscriptionCount,
-  }) =>
-      PrivateChannelState(
-        status: status ?? this.status,
-        subscriptionCount: subscriptionCount ?? this.subscriptionCount,
-      );
+  }) => PrivateChannelState(
+    status: status ?? this.status,
+    subscriptionCount: subscriptionCount ?? this.subscriptionCount,
+  );
 }
 
 /// Private channels require users to authorized to subscribe it.
@@ -60,15 +57,21 @@ class PrivateChannelState implements ChannelState {
 /// - [EndpointAuthorizableChannelAuthorizationDelegate]
 /// - [Private Channel docs](https://pusher.com/docs/channels/using_channels/private-channels/)
 ///
-class PrivateChannel extends EndpointAuthorizableChannel<PrivateChannelState,
-        PrivateChannelAuthorizationData>
+class PrivateChannel
+    extends
+        EndpointAuthorizableChannel<
+          PrivateChannelState,
+          PrivateChannelAuthorizationData
+        >
     with TriggerableChannelMixin<PrivateChannelState> {
   @override
   final ChannelsManagerConnectionDelegate connectionDelegate;
 
   @override
   final EndpointAuthorizableChannelAuthorizationDelegate<
-      PrivateChannelAuthorizationData> authorizationDelegate;
+    PrivateChannelAuthorizationData
+  >
+  authorizationDelegate;
 
   @override
   final ChannelPublicEventEmitter publicEventEmitter;
@@ -117,31 +120,20 @@ class PrivateChannel extends EndpointAuthorizableChannel<PrivateChannelState,
   /// Sends the unsubscription event through the [connectionDelegate].
   @override
   void unsubscribe() {
-    connectionDelegate.sendEvent(
-      ChannelUnsubscribeEvent(
-        channelName: name,
-      ),
-    );
+    connectionDelegate.sendEvent(ChannelUnsubscribeEvent(channelName: name));
     super.unsubscribe();
   }
 
   @override
   PrivateChannelState getStateWithNewStatus(ChannelStatus status) =>
-      state?.copyWith(
-        status: status,
-      ) ??
-      PrivateChannelState(
-        status: status,
-        subscriptionCount: null,
-      );
+      state?.copyWith(status: status) ??
+      PrivateChannelState(status: status, subscriptionCount: null);
 
   @override
   PrivateChannelState getStateWithNewSubscriptionCount(
     int? subscriptionCount,
   ) =>
-      state?.copyWith(
-        subscriptionCount: subscriptionCount,
-      ) ??
+      state?.copyWith(subscriptionCount: subscriptionCount) ??
       PrivateChannelState(
         status: ChannelStatus.idle,
         subscriptionCount: subscriptionCount,

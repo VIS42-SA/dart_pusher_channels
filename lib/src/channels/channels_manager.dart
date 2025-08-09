@@ -24,17 +24,13 @@ class ChannelsManagerHasBeenDisposedException
   const ChannelsManagerHasBeenDisposedException();
 }
 
-typedef ChannelPublicEventEmitter = void Function(
-  ChannelReadEvent event,
-);
+typedef ChannelPublicEventEmitter = void Function(ChannelReadEvent event);
 
-typedef ChannelsManagerSendEventDelegate = void Function(
-  PusherChannelsSentEventMixin event,
-);
+typedef ChannelsManagerSendEventDelegate =
+    void Function(PusherChannelsSentEventMixin event);
 
-typedef ChannelsManagerTriggerEventDelegate = void Function(
-  PusherChannelsTriggerEvent event,
-);
+typedef ChannelsManagerTriggerEventDelegate =
+    void Function(PusherChannelsTriggerEvent event);
 
 typedef ChannelsManagerSocketIdGetter = String? Function();
 
@@ -85,9 +81,7 @@ class ChannelsManager {
   @protected
   final ChannelsManagerConnectionDelegate channelsConnectionDelegate;
 
-  ChannelsManager({
-    required this.channelsConnectionDelegate,
-  });
+  ChannelsManager({required this.channelsConnectionDelegate});
 
   void handleEvent(PusherChannelsEvent event) {
     if (_isDisposed) {
@@ -114,17 +108,16 @@ class ChannelsManager {
   PublicChannel publicChannel(
     String channelName, {
     required bool forceCreateNewInstance,
-  }) =>
-      _createChannelSafely<PublicChannel>(
-        channelName: channelName,
-        forceCreateNewInstance: forceCreateNewInstance,
-        constructorDelegate: () => PublicChannel.internal(
-          connectionDelegate: channelsConnectionDelegate,
-          publicStreamGetter: () => _publicStreamController.stream,
-          name: channelName,
-          publicEventEmitter: _exposedPublicEventsStreamEmit,
-        ),
-      );
+  }) => _createChannelSafely<PublicChannel>(
+    channelName: channelName,
+    forceCreateNewInstance: forceCreateNewInstance,
+    constructorDelegate: () => PublicChannel.internal(
+      connectionDelegate: channelsConnectionDelegate,
+      publicStreamGetter: () => _publicStreamController.stream,
+      name: channelName,
+      publicEventEmitter: _exposedPublicEventsStreamEmit,
+    ),
+  );
 
   /// Creates and saves private channel under the key respective to [channelName].
   ///
@@ -132,21 +125,21 @@ class ChannelsManager {
   PrivateChannel privateChannel(
     String channelName, {
     required EndpointAuthorizableChannelAuthorizationDelegate<
-            PrivateChannelAuthorizationData>
-        authorizationDelegate,
+      PrivateChannelAuthorizationData
+    >
+    authorizationDelegate,
     required bool forceCreateNewInstance,
-  }) =>
-      _createChannelSafely<PrivateChannel>(
-        channelName: channelName,
-        forceCreateNewInstance: forceCreateNewInstance,
-        constructorDelegate: () => PrivateChannel.internal(
-          authorizationDelegate: authorizationDelegate,
-          connectionDelegate: channelsConnectionDelegate,
-          publicStreamGetter: () => _publicStreamController.stream,
-          name: channelName,
-          publicEventEmitter: _exposedPublicEventsStreamEmit,
-        ),
-      );
+  }) => _createChannelSafely<PrivateChannel>(
+    channelName: channelName,
+    forceCreateNewInstance: forceCreateNewInstance,
+    constructorDelegate: () => PrivateChannel.internal(
+      authorizationDelegate: authorizationDelegate,
+      connectionDelegate: channelsConnectionDelegate,
+      publicStreamGetter: () => _publicStreamController.stream,
+      name: channelName,
+      publicEventEmitter: _exposedPublicEventsStreamEmit,
+    ),
+  );
 
   /// Creates and saves private encrypted channel under the key respective to [channelName].
   ///
@@ -154,24 +147,24 @@ class ChannelsManager {
   PrivateEncryptedChannel privateEncryptedChannel(
     String channelName, {
     required EndpointAuthorizableChannelAuthorizationDelegate<
-            PrivateEncryptedChannelAuthorizationData>
-        authorizationDelegate,
+      PrivateEncryptedChannelAuthorizationData
+    >
+    authorizationDelegate,
     required bool forceCreateNewInstance,
     required PrivateEncryptedChannelEventDataEncodeDelegate
-        eventDataEncodeDelegate,
-  }) =>
-      _createChannelSafely<PrivateEncryptedChannel>(
-        channelName: channelName,
-        forceCreateNewInstance: forceCreateNewInstance,
-        constructorDelegate: () => PrivateEncryptedChannel.internal(
-          eventDataEncodeDelegate: eventDataEncodeDelegate,
-          authorizationDelegate: authorizationDelegate,
-          connectionDelegate: channelsConnectionDelegate,
-          publicStreamGetter: () => _publicStreamController.stream,
-          name: channelName,
-          publicEventEmitter: _exposedPublicEventsStreamEmit,
-        ),
-      );
+    eventDataEncodeDelegate,
+  }) => _createChannelSafely<PrivateEncryptedChannel>(
+    channelName: channelName,
+    forceCreateNewInstance: forceCreateNewInstance,
+    constructorDelegate: () => PrivateEncryptedChannel.internal(
+      eventDataEncodeDelegate: eventDataEncodeDelegate,
+      authorizationDelegate: authorizationDelegate,
+      connectionDelegate: channelsConnectionDelegate,
+      publicStreamGetter: () => _publicStreamController.stream,
+      name: channelName,
+      publicEventEmitter: _exposedPublicEventsStreamEmit,
+    ),
+  );
 
   /// Creates and saves presence channel under the key respective to [channelName].
   ///
@@ -179,21 +172,21 @@ class ChannelsManager {
   PresenceChannel presenceChannel(
     String channelName, {
     required EndpointAuthorizableChannelAuthorizationDelegate<
-            PresenceChannelAuthorizationData>
-        authorizationDelegate,
+      PresenceChannelAuthorizationData
+    >
+    authorizationDelegate,
     required bool forceCreateNewInstance,
-  }) =>
-      _createChannelSafely<PresenceChannel>(
-        channelName: channelName,
-        forceCreateNewInstance: forceCreateNewInstance,
-        constructorDelegate: () => PresenceChannel.internal(
-          authorizationDelegate: authorizationDelegate,
-          connectionDelegate: channelsConnectionDelegate,
-          publicStreamGetter: () => _publicStreamController.stream,
-          name: channelName,
-          publicEventEmitter: _exposedPublicEventsStreamEmit,
-        ),
-      );
+  }) => _createChannelSafely<PresenceChannel>(
+    channelName: channelName,
+    forceCreateNewInstance: forceCreateNewInstance,
+    constructorDelegate: () => PresenceChannel.internal(
+      authorizationDelegate: authorizationDelegate,
+      connectionDelegate: channelsConnectionDelegate,
+      publicStreamGetter: () => _publicStreamController.stream,
+      name: channelName,
+      publicEventEmitter: _exposedPublicEventsStreamEmit,
+    ),
+  );
 
   /// Destroys this instance, clears [_channelsMap] and closes [_publicStreamController]
   /// making this instance

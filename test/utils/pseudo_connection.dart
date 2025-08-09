@@ -24,26 +24,19 @@ class _PseudoSentEvent extends PusherChannelsEvent
   });
 
   factory _PseudoSentEvent.connectionEstablished() => _PseudoSentEvent(
-        channel: null,
-        data: {
-          'socket_id': 123,
-        },
-        name: PusherChannelsConnectionEstablishedEvent.eventName,
-        userId: null,
-      );
+    channel: null,
+    data: {'socket_id': 123},
+    name: PusherChannelsConnectionEstablishedEvent.eventName,
+    userId: null,
+  );
 
   @override
-  String getEncoded() => jsonEncode(
-        {
-          PusherChannelsEvent.eventNameKey: name,
-          if (channel != null) PusherChannelsEvent.channelKey: channel,
-          if (data != null)
-            PusherChannelsEvent.dataKey: jsonEncode(
-              data,
-            ),
-          if (userId != null) PusherChannelsEvent.userIdKey: userId,
-        },
-      );
+  String getEncoded() => jsonEncode({
+    PusherChannelsEvent.eventNameKey: name,
+    if (channel != null) PusherChannelsEvent.channelKey: channel,
+    if (data != null) PusherChannelsEvent.dataKey: jsonEncode(data),
+    if (userId != null) PusherChannelsEvent.userIdKey: userId,
+  });
 }
 
 class PseudoConnection extends PusherChannelsConnection {
@@ -51,9 +44,7 @@ class PseudoConnection extends PusherChannelsConnection {
   final StreamController<String> _controller = StreamController.broadcast();
   StreamSubscription? _subscription;
 
-  void addError() => _controller.addError(
-        const PseudoConnectionException(),
-      );
+  void addError() => _controller.addError(const PseudoConnectionException());
 
   @override
   void close() {
@@ -73,20 +64,13 @@ class PseudoConnection extends PusherChannelsConnection {
   }) {
     _subscription = _controller.stream.listen(
       (event) => _onEvent(event, onEventCallback),
-      onError: (error, trace) => _onError(
-        exception: error,
-        trace: trace,
-        callback: onErrorCallback,
-      ),
-      onDone: () => _onDone(
-        onDoneCallback,
-      ),
+      onError: (error, trace) =>
+          _onError(exception: error, trace: trace, callback: onErrorCallback),
+      onDone: () => _onDone(onDoneCallback),
       cancelOnError: false,
     );
 
-    _controller.add(
-      _PseudoSentEvent.connectionEstablished().getEncoded(),
-    );
+    _controller.add(_PseudoSentEvent.connectionEstablished().getEncoded());
   }
 
   @override
@@ -120,9 +104,6 @@ class PseudoConnection extends PusherChannelsConnection {
     if (_isClosed) {
       return;
     }
-    callback(
-      exception,
-      trace,
-    );
+    callback(exception, trace);
   }
 }

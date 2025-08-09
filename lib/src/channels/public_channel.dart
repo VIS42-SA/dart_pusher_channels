@@ -21,11 +21,10 @@ class PublicChannelState implements ChannelState {
   PublicChannelState copyWith({
     ChannelStatus? status,
     int? subscriptionCount,
-  }) =>
-      PublicChannelState(
-        status: status ?? this.status,
-        subscriptionCount: subscriptionCount ?? this.subscriptionCount,
-      );
+  }) => PublicChannelState(
+    status: status ?? this.status,
+    subscriptionCount: subscriptionCount ?? this.subscriptionCount,
+  );
 }
 
 /// Public channels should be used for publicly accessible data as they do not require any form of authorization in order to be subscribed to.
@@ -58,40 +57,25 @@ class PublicChannel extends Channel<PublicChannelState> {
   void subscribe() {
     super.subscribe();
     connectionDelegate.sendEvent(
-      ChannelSubscribeEvent.forPublicChannel(
-        channelName: name,
-      ),
+      ChannelSubscribeEvent.forPublicChannel(channelName: name),
     );
   }
 
   /// Sends the unsubscription event through the [connectionDelegate].
   @override
   void unsubscribe() {
-    connectionDelegate.sendEvent(
-      ChannelUnsubscribeEvent(
-        channelName: name,
-      ),
-    );
+    connectionDelegate.sendEvent(ChannelUnsubscribeEvent(channelName: name));
     super.unsubscribe();
   }
 
   @override
   PublicChannelState getStateWithNewStatus(ChannelStatus status) =>
-      state?.copyWith(
-        status: status,
-      ) ??
-      PublicChannelState(
-        status: status,
-        subscriptionCount: null,
-      );
+      state?.copyWith(status: status) ??
+      PublicChannelState(status: status, subscriptionCount: null);
 
   @override
-  PublicChannelState getStateWithNewSubscriptionCount(
-    int? subscriptionCount,
-  ) =>
-      state?.copyWith(
-        subscriptionCount: subscriptionCount,
-      ) ??
+  PublicChannelState getStateWithNewSubscriptionCount(int? subscriptionCount) =>
+      state?.copyWith(subscriptionCount: subscriptionCount) ??
       PublicChannelState(
         status: ChannelStatus.idle,
         subscriptionCount: subscriptionCount,

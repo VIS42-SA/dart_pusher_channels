@@ -4,32 +4,26 @@ import 'package:dart_pusher_channels/src/events/channel_events/channel_read_even
 import 'package:dart_pusher_channels/src/events/event.dart';
 
 extension PresenceChannelExtension on PresenceChannel {
-  Stream<ChannelReadEvent> whenSubscriptionCount() => bind(
-        Channel.subscriptionsCountEventName,
-      );
+  Stream<ChannelReadEvent> whenSubscriptionCount() =>
+      bind(Channel.subscriptionsCountEventName);
 
-  Stream<ChannelReadEvent> whenMemberAdded() => bind(
-        Channel.memberAddedEventName,
-      );
+  Stream<ChannelReadEvent> whenMemberAdded() =>
+      bind(Channel.memberAddedEventName);
 
-  Stream<ChannelReadEvent> whenMemberRemoved() => bind(
-        Channel.memberRemovedEventName,
-      );
+  Stream<ChannelReadEvent> whenMemberRemoved() =>
+      bind(Channel.memberRemovedEventName);
 }
 
 extension ChannelExtension<T extends ChannelState> on Channel<T> {
   Stream<ChannelReadEvent> whenSubscriptionSucceeded() =>
       bind(Channel.subscriptionSucceededEventName);
 
-  Stream<ChannelReadEvent> onSubscriptionError({String? errorType}) =>
-      bind(Channel.subscriptionErrorEventName).where(
-        (event) => _filterSubscriptionErrorPredicate(errorType, event),
-      );
+  Stream<ChannelReadEvent> onSubscriptionError({String? errorType}) => bind(
+    Channel.subscriptionErrorEventName,
+  ).where((event) => _filterSubscriptionErrorPredicate(errorType, event));
 
   Stream<ChannelReadEvent> onAuthenticationSubscriptionFailed() =>
-      onSubscriptionError(
-        errorType: Channel.authErrorTypeString,
-      );
+      onSubscriptionError(errorType: Channel.authErrorTypeString);
 
   bool _filterSubscriptionErrorPredicate(
     String? errorType,
@@ -38,8 +32,9 @@ extension ChannelExtension<T extends ChannelState> on Channel<T> {
     if (errorType == null) {
       return true;
     }
-    final eventErrorType =
-        event.tryGetDataAsMap()?[PusherChannelsEvent.errorTypeKey]?.toString();
+    final eventErrorType = event
+        .tryGetDataAsMap()?[PusherChannelsEvent.errorTypeKey]
+        ?.toString();
 
     return eventErrorType == errorType;
   }

@@ -28,9 +28,8 @@ class PusherChannelsErrorEvent
     required this.rootObject,
   });
 
-  int? get code => int.tryParse(
-        deserializedMapData[_codeKey]?.toString() ?? '',
-      );
+  int? get code =>
+      int.tryParse(deserializedMapData[_codeKey]?.toString() ?? '');
   String? get message => deserializedMapData[_messageKey]?.toString();
 
   static PusherChannelsErrorEvent? tryParseFromDynamic(dynamic message) {

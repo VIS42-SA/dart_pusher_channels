@@ -1,4 +1,4 @@
-library pusher_channels_options;
+library;
 
 import 'package:dart_pusher_channels/dart_pusher_channels.dart';
 import 'package:meta/meta.dart';
@@ -7,9 +7,8 @@ part 'clustered_options.dart';
 part 'host_options.dart';
 part 'custom_options.dart';
 
-typedef PusherChannelsOptionsCustomUriResolver = Uri Function(
-  PusherChannelsOptionsMetadata metadata,
-);
+typedef PusherChannelsOptionsCustomUriResolver =
+    Uri Function(PusherChannelsOptionsMetadata metadata);
 
 /// Provides [queryParameters] that are used as the metadata injected into this [uri].
 mixin _QuerySupplyMixin on PusherChannelsOptions {
@@ -55,18 +54,18 @@ class PusherChannelsOptionsMetadata {
   });
 
   const PusherChannelsOptionsMetadata.byDefault()
-      : this(
-          client: 'dart',
-          protocol: kLatestAvailablePusherProtocol,
-          version: kDartPusherChannelsLibraryVersion,
-        );
+    : this(
+        client: 'dart',
+        protocol: kLatestAvailablePusherProtocol,
+        version: kDartPusherChannelsLibraryVersion,
+      );
 
   /// Provides the metadata as [Map].
   Map<String, String> getQueryParameters() => {
-        'client': client,
-        'version': version,
-        'protocol': protocol.toString(),
-      };
+    'client': client,
+    'version': version,
+    'protocol': protocol.toString(),
+  };
 }
 
 /// Options passed to instances of [PusherChannelsClient].

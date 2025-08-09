@@ -22,9 +22,7 @@ class PusherChannelsWebSocketConnection implements PusherChannelsConnection {
   StreamSubscription? _webSocketEventsSubscription;
   final Uri uri;
 
-  PusherChannelsWebSocketConnection({
-    required this.uri,
-  });
+  PusherChannelsWebSocketConnection({required this.uri});
 
   @override
   void connect({
@@ -97,9 +95,6 @@ class PusherChannelsWebSocketConnection implements PusherChannelsConnection {
       return;
     }
     _webSocketChannel = null;
-    callback(
-      exception,
-      trace,
-    );
+    callback(exception, trace);
   }
 }

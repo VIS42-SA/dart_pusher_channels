@@ -4,10 +4,8 @@ import 'package:dart_pusher_channels/src/channels/endpoint_authorizable_channel/
 import 'package:dart_pusher_channels/src/channels/endpoint_authorizable_channel/http_token_authorization_delegate.dart';
 import 'package:meta/meta.dart';
 
-typedef EndpointAuthFailedCallback = void Function(
-  dynamic exception,
-  StackTrace trace,
-);
+typedef EndpointAuthFailedCallback =
+    void Function(dynamic exception, StackTrace trace);
 
 /// An interface for authorization data to be received
 /// from by an instance of [EndpointAuthorizableChannel].
@@ -20,7 +18,8 @@ abstract class EndpointAuthorizationData {}
 /// See also:
 /// - [EndpointAuthorizableChannelTokenAuthorizationDelegate].
 abstract class EndpointAuthorizableChannelAuthorizationDelegate<
-    T extends EndpointAuthorizationData> {
+  T extends EndpointAuthorizationData
+> {
   /// Added as an option to get a detailed
   /// information about the fail.
   EndpointAuthFailedCallback? get onAuthFailed;

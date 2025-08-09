@@ -15,17 +15,12 @@ class PusherChannelsReadEvent
   @override
   final Map<String, dynamic> rootObject;
 
-  PusherChannelsReadEvent({
-    required this.rootObject,
-  });
+  PusherChannelsReadEvent({required this.rootObject});
 
   /// An adapter to create an instance from other readables.
   factory PusherChannelsReadEvent.fromReadable(
     PusherChannelsReadEventMixin event,
-  ) =>
-      PusherChannelsReadEvent(
-        rootObject: {...event.rootObject},
-      );
+  ) => PusherChannelsReadEvent(rootObject: {...event.rootObject});
 
   String? get channelName =>
       rootObject[PusherChannelsEvent.channelKey]?.toString();
@@ -38,8 +33,6 @@ class PusherChannelsReadEvent
       return null;
     }
 
-    return PusherChannelsReadEvent(
-      rootObject: root,
-    );
+    return PusherChannelsReadEvent(rootObject: root);
   }
 }

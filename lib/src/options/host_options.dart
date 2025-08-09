@@ -1,4 +1,4 @@
-part of pusher_channels_options;
+part of 'options.dart';
 
 @immutable
 class _HostOptions with PusherChannelsOptions, _QuerySupplyMixin {
@@ -27,12 +27,12 @@ class _HostOptions with PusherChannelsOptions, _QuerySupplyMixin {
 
   @override
   Uri get uri => Uri(
-        scheme: scheme,
-        port: port,
-        host: host,
-        path: _path,
-        queryParameters: queryParameters,
-      );
+    scheme: scheme,
+    port: port,
+    host: host,
+    path: _path,
+    queryParameters: queryParameters,
+  );
 
   String get _path => '/app/$key';
 }

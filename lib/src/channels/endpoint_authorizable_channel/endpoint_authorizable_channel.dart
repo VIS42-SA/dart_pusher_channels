@@ -5,10 +5,8 @@ import 'package:dart_pusher_channels/src/exception/exception.dart';
 import 'package:dart_pusher_channels/src/utils/logger.dart';
 import 'package:meta/meta.dart';
 
-typedef EndpointAuthorizationErrorCallback = void Function(
-  dynamic exception,
-  StackTrace trace,
-);
+typedef EndpointAuthorizationErrorCallback =
+    void Function(dynamic exception, StackTrace trace);
 
 /// A base class for channels that require authorization before subscription.
 ///
@@ -16,11 +14,14 @@ typedef EndpointAuthorizationErrorCallback = void Function(
 ///
 /// See also:
 /// - [Authorizing docs](https://pusher.com/docs/channels/server_api/authorizing-users/).
-abstract class EndpointAuthorizableChannel<T extends ChannelState,
-    A extends EndpointAuthorizationData> extends Channel<T> {
+abstract class EndpointAuthorizableChannel<
+  T extends ChannelState,
+  A extends EndpointAuthorizationData
+>
+    extends Channel<T> {
   @protected
   abstract final EndpointAuthorizableChannelAuthorizationDelegate<A>
-      authorizationDelegate;
+  authorizationDelegate;
 
   A? _authData;
   int _authRequestLifeCycle = 0;
@@ -52,10 +53,7 @@ abstract class EndpointAuthorizableChannel<T extends ChannelState,
     final fixatedLifeCycle = _authRequestLifeCycle;
     A? result;
     try {
-      result = await authorizationDelegate.authorizationData(
-        socketId,
-        name,
-      );
+      result = await authorizationDelegate.authorizationData(socketId, name);
       if (fixatedLifeCycle < _authRequestLifeCycle) {
         return;
       }
@@ -75,7 +73,8 @@ abstract class EndpointAuthorizableChannel<T extends ChannelState,
 
     late final String message;
 
-    final defaultMessage = '''
+    final defaultMessage =
+        '''
 Failed to get authorizationData.
 Channel: $name,
 Exception: $exception,
@@ -88,9 +87,7 @@ Trace: $trace,
       message = defaultMessage;
     }
 
-    PusherChannelsPackageLogger.log(
-      message,
-    );
+    PusherChannelsPackageLogger.log(message);
 
     publicEventEmitter(
       ChannelReadEvent.forSubscriptionError(
@@ -100,10 +97,7 @@ Trace: $trace,
       ),
     );
     Future.microtask(
-      () => authorizationDelegate.onAuthFailed?.call(
-        exception,
-        trace,
-      ),
+      () => authorizationDelegate.onAuthFailed?.call(exception, trace),
     );
   }
 }

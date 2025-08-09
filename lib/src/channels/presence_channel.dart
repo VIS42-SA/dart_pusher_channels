@@ -46,22 +46,21 @@ class PresenceChannelState implements ChannelState {
   });
 
   const PresenceChannelState.initial()
-      : this._(
-          status: ChannelStatus.idle,
-          members: null,
-          subscriptionCount: null,
-        );
+    : this._(
+        status: ChannelStatus.idle,
+        members: null,
+        subscriptionCount: null,
+      );
 
   PresenceChannelState copyWith({
     ChannelStatus? status,
     int? subscriptionCount,
     ChannelMembers? members,
-  }) =>
-      PresenceChannelState._(
-        members: members ?? this.members,
-        status: status ?? this.status,
-        subscriptionCount: subscriptionCount ?? this.subscriptionCount,
-      );
+  }) => PresenceChannelState._(
+    members: members ?? this.members,
+    status: status ?? this.status,
+    subscriptionCount: subscriptionCount ?? this.subscriptionCount,
+  );
 }
 
 /// Presence channels require users to authorized to subscribe it.
@@ -79,15 +78,21 @@ class PresenceChannelState implements ChannelState {
 /// - [EndpointAuthorizableChannelAuthorizationDelegate]
 /// - [Presence Channel docs](https://pusher.com/docs/channels/using_channels/presence-channels/)
 ///
-class PresenceChannel extends EndpointAuthorizableChannel<PresenceChannelState,
-        PresenceChannelAuthorizationData>
+class PresenceChannel
+    extends
+        EndpointAuthorizableChannel<
+          PresenceChannelState,
+          PresenceChannelAuthorizationData
+        >
     with TriggerableChannelMixin<PresenceChannelState> {
   @override
   final ChannelsManagerConnectionDelegate connectionDelegate;
 
   @override
   final EndpointAuthorizableChannelAuthorizationDelegate<
-      PresenceChannelAuthorizationData> authorizationDelegate;
+    PresenceChannelAuthorizationData
+  >
+  authorizationDelegate;
 
   @override
   final String name;
@@ -138,27 +143,18 @@ class PresenceChannel extends EndpointAuthorizableChannel<PresenceChannelState,
   /// Sends the unsubscription event through the [connectionDelegate].
   @override
   void unsubscribe() {
-    connectionDelegate.sendEvent(
-      ChannelUnsubscribeEvent(
-        channelName: name,
-      ),
-    );
+    connectionDelegate.sendEvent(ChannelUnsubscribeEvent(channelName: name));
     super.unsubscribe();
   }
 
   @override
   PresenceChannelState getStateWithNewStatus(ChannelStatus status) =>
-      _stateIfNull().copyWith(
-        status: status,
-      );
+      _stateIfNull().copyWith(status: status);
 
   @override
   PresenceChannelState getStateWithNewSubscriptionCount(
     int? subscriptionCount,
-  ) =>
-      _stateIfNull().copyWith(
-        subscriptionCount: subscriptionCount,
-      );
+  ) => _stateIfNull().copyWith(subscriptionCount: subscriptionCount);
 
   @internal
   @override
@@ -182,9 +178,7 @@ class PresenceChannel extends EndpointAuthorizableChannel<PresenceChannelState,
 
   @protected
   PresenceChannelState getStateWithNewMembers(ChannelMembers? members) =>
-      _stateIfNull().copyWith(
-        members: members,
-      );
+      _stateIfNull().copyWith(members: members);
 
   void _handleAuthenticated(
     PresenceChannelAuthorizationData authorizationData,
@@ -200,20 +194,11 @@ class PresenceChannel extends EndpointAuthorizableChannel<PresenceChannelState,
     final myData = dataDecoded;
     updateState(
       getStateWithNewMembers(
-        (state?.members
-              ?..updateMe(
-                memberInfo: MemberInfo(
-                  id: myId,
-                  info: {
-                    ...myData,
-                  },
-                ),
-                id: myId,
-              )) ??
-            ChannelMembers.onlyMe(
-              myData: myData,
-              myId: myId,
-            ),
+        (state?.members?..updateMe(
+              memberInfo: MemberInfo(id: myId, info: {...myData}),
+              id: myId,
+            )) ??
+            ChannelMembers.onlyMe(myData: myData, myId: myId),
       ),
     );
   }
@@ -224,24 +209,10 @@ class PresenceChannel extends EndpointAuthorizableChannel<PresenceChannelState,
     if (userId == null) {
       return;
     }
-    final members = state?.members ??
-        ChannelMembers(
-          membersMap: {},
-          myId: null,
-        );
-    updateState(
-      getStateWithNewMembers(
-        members
-          ..removeMember(
-            userId: userId,
-          ),
-      ),
-    );
-    publicEventEmitter(
-      event.copyWithName(
-        Channel.memberRemovedEventName,
-      ),
-    );
+    final members =
+        state?.members ?? ChannelMembers(membersMap: {}, myId: null);
+    updateState(getStateWithNewMembers(members..removeMember(userId: userId)));
+    publicEventEmitter(event.copyWithName(Channel.memberRemovedEventName));
   }
 
   void _handleMemberAdded(ChannelReadEvent event) {
@@ -251,28 +222,17 @@ class PresenceChannel extends EndpointAuthorizableChannel<PresenceChannelState,
     if (userId == null || userInfo == null) {
       return;
     }
-    final members = state?.members ??
-        ChannelMembers(
-          membersMap: {},
-          myId: null,
-        );
+    final members =
+        state?.members ?? ChannelMembers(membersMap: {}, myId: null);
     updateState(
       getStateWithNewMembers(
-        members
-          ..updateMember(
-            id: userId,
-            info: MemberInfo(
-              id: userId,
-              info: userInfo,
-            ),
-          ),
+        members..updateMember(
+          id: userId,
+          info: MemberInfo(id: userId, info: userInfo),
+        ),
       ),
     );
-    publicEventEmitter(
-      event.copyWithName(
-        Channel.memberAddedEventName,
-      ),
-    );
+    publicEventEmitter(event.copyWithName(Channel.memberAddedEventName));
   }
 
   void _handleSubscription(ChannelReadEvent readEvent) {
@@ -281,21 +241,13 @@ class PresenceChannel extends EndpointAuthorizableChannel<PresenceChannelState,
       return;
     }
 
-    final newMembers = ChannelMembers.tryParseFromMap(
-      data: data,
-    );
+    final newMembers = ChannelMembers.tryParseFromMap(data: data);
 
     if (newMembers == null) {
-      updateState(
-        getStateWithNewMembers(
-          null,
-        ),
-      );
+      updateState(getStateWithNewMembers(null));
     } else {
       final currentMembers = state?.members;
-      final dataToMerge = {
-        ...newMembers.getAsMap(),
-      };
+      final dataToMerge = {...newMembers.getAsMap()};
       final myId = currentMembers?.getMyId();
       if (myId != null) {
         dataToMerge.remove(myId);
@@ -303,11 +255,7 @@ class PresenceChannel extends EndpointAuthorizableChannel<PresenceChannelState,
 
       updateState(
         getStateWithNewMembers(
-          (currentMembers
-                ?..merge(
-                  dataToMerge,
-                )) ??
-              newMembers,
+          (currentMembers?..merge(dataToMerge)) ?? newMembers,
         ),
       );
     }

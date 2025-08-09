@@ -175,13 +175,9 @@ abstract class Channel<T extends ChannelState> {
   /// Returns a stream with all the events captured
   /// by this channel.
   Stream<ChannelReadEvent> bindToAll() => publicStreamGetter()
-      .where(
-        (event) => event.channelName == name,
-      )
+      .where((event) => event.channelName == name)
       .transform<ChannelReadEvent>(
-        StreamTransformer.fromHandlers(
-          handleData: _bindStreamSinkFilter,
-        ),
+        StreamTransformer.fromHandlers(handleData: _bindStreamSinkFilter),
       );
 
   /// Return a stream capturing events with respective [eventName].
@@ -193,9 +189,7 @@ abstract class Channel<T extends ChannelState> {
         ),
       )
       .transform<ChannelReadEvent>(
-        StreamTransformer.fromHandlers(
-          handleData: _bindStreamSinkFilter,
-        ),
+        StreamTransformer.fromHandlers(handleData: _bindStreamSinkFilter),
       );
 
   /// Passes all other events to [ChannelsManager]'s instances' sink i.e. - [publicEventEmitter]
@@ -205,9 +199,7 @@ abstract class Channel<T extends ChannelState> {
     if (readEvent.name.contains(pusherInternalPrefix)) {
       return;
     }
-    publicEventEmitter(
-      readEvent,
-    );
+    publicEventEmitter(readEvent);
   }
 
   bool _bindStreamFilterPredicate({
@@ -226,42 +218,24 @@ abstract class Channel<T extends ChannelState> {
     if (currentStatus == ChannelStatus.unsubscribed) {
       return;
     }
-    sink.add(
-      event,
-    );
+    sink.add(event);
   }
 
   void _ensureStatusPendingBeforeSubscribe() {
     if (currentStatus != ChannelStatus.pendingSubscription) {
-      updateState(
-        getStateWithNewStatus(
-          ChannelStatus.pendingSubscription,
-        ),
-      );
+      updateState(getStateWithNewStatus(ChannelStatus.pendingSubscription));
     }
   }
 
   void _setUnsubscribedStatus() {
-    updateState(
-      getStateWithNewStatus(
-        ChannelStatus.unsubscribed,
-      ),
-    );
+    updateState(getStateWithNewStatus(ChannelStatus.unsubscribed));
   }
 
   /// Handles events with name pusher_internal:subscription_succeeded and swaps
   /// its name to pusher:subscription_succeeded.
   void _handleSubscription(ChannelReadEvent readEvent) {
-    updateState(
-      getStateWithNewStatus(
-        ChannelStatus.subscribed,
-      ),
-    );
-    publicEventEmitter(
-      readEvent.copyWithName(
-        subscriptionSucceededEventName,
-      ),
-    );
+    updateState(getStateWithNewStatus(ChannelStatus.subscribed));
+    publicEventEmitter(readEvent.copyWithName(subscriptionSucceededEventName));
   }
 
   /// Handles events with name pusher_internal:subscription_count and swaps
@@ -270,15 +244,7 @@ abstract class Channel<T extends ChannelState> {
     final count = int.tryParse(
       '${readEvent.tryGetDataAsMap()?[subscriptionsCountKey]}',
     );
-    updateState(
-      getStateWithNewSubscriptionCount(
-        count,
-      ),
-    );
-    publicEventEmitter(
-      readEvent.copyWithName(
-        subscriptionsCountEventName,
-      ),
-    );
+    updateState(getStateWithNewSubscriptionCount(count));
+    publicEventEmitter(readEvent.copyWithName(subscriptionsCountEventName));
   }
 }

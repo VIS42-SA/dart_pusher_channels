@@ -27,137 +27,100 @@ class _ConnectionMetrics {
       reconnectsCount = 0,
       connectionInactivesCount = 0,
     ]) {
-      expect(
-        parameter,
-        0,
-      );
+      expect(parameter, 0);
     }
   }
 }
 
 void main() {
-  group(
-    'dart_pusher_channels client integration test',
-    () {
-      test(
-        'Lifecycle states execution order',
-        () async {
-          final connectionMetrics = _ConnectionMetrics();
-          connectionMetrics.expectMetricsAreDefault();
-          PseudoConnection pseudoConnection = PseudoConnection();
-          final client = PusherChannelsClient.custom(
-            connectionDelegate: () => pseudoConnection = PseudoConnection(),
-            connectionErrorHandler: (exception, trace, refresh) {
-              refresh();
-            },
-          );
-          client.lifecycleStream.listen((event) {
-            print(event);
-            switch (event) {
-              case PusherChannelsClientLifeCycleState.connectionError:
-                connectionMetrics.connectionErrorsCount++;
-                break;
-              case PusherChannelsClientLifeCycleState.disconnected:
-                connectionMetrics.disconnectsCount++;
-                break;
-              case PusherChannelsClientLifeCycleState.disposed:
-                connectionMetrics.connectionDisposionsCount++;
-                break;
-              case PusherChannelsClientLifeCycleState.gotPusherError:
-                connectionMetrics.pushErrorsCount++;
-                break;
-              case PusherChannelsClientLifeCycleState.establishedConnection:
-                connectionMetrics.connectionsCount++;
-                break;
-              case PusherChannelsClientLifeCycleState.pendingConnection:
-                connectionMetrics.connectionPendingsCount++;
-                break;
-              case PusherChannelsClientLifeCycleState.reconnecting:
-                connectionMetrics.reconnectsCount++;
-                break;
-              case PusherChannelsClientLifeCycleState.inactive:
-                connectionMetrics.connectionInactivesCount++;
-                break;
-            }
-          });
-          unawaited(
-            client.connect(),
-          );
-          // waiting for PusherChannelsClientLifeCycleState.pendingConnection status to be registered
-          await _passEventInEventLoop();
-          await client.getConnectionCompleterFuture();
-          // waiting for PusherChannelsClientLifeCycleState.establishedConnection to be registered
-          await _passEventInEventLoop();
-          expect(
-            connectionMetrics.connectionsCount,
-            1,
-          );
-          unawaited(client.reconnect());
-          // waiting for PusherChannelsClientLifeCycleState.reconnecting to be registered
-          await _passEventInEventLoop();
-          expect(
-            connectionMetrics.reconnectsCount,
-            1,
-          );
-          await client.getConnectionCompleterFuture();
-          // waiting for PusherChannelsClientLifeCycleState.pendingConnection to be registered
-          await _passEventInEventLoop();
-          expect(
-            connectionMetrics.connectionPendingsCount,
-            2,
-          );
-          // waiting for PusherChannelsClientLifeCycleState.establishedConnection to be registered
-          await _passEventInEventLoop();
-          expect(
-            connectionMetrics.connectionsCount,
-            2,
-          );
-          pseudoConnection.addError();
-          // waiting for error added to the stream
-          await _passEventInEventLoop();
-          // waiting for PusherChannelsClientLifeCycleState.onConnectionError to be registered
-          await _passEventInEventLoop();
-          expect(
-            connectionMetrics.connectionErrorsCount,
-            1,
-          );
-          client.dispose();
-          // waiting for PusherChannelsClientLifeCycleState.reconnect to be registered
-          await _passEventInEventLoop();
-          // waiting for PusherChannelsClientLifeCycleState.disposed to be registered
-          await _passEventInEventLoop();
-          expect(
-            connectionMetrics.connectionDisposionsCount,
-            1,
-          );
-          await expectLater(
-            client.connect,
-            throwsA(
-              isA<PusherChannelsClientDisposedException>(),
-            ),
-          );
-          await expectLater(
-            client.disconnect,
-            throwsA(
-              isA<PusherChannelsClientDisposedException>(),
-            ),
-          );
-          await expectLater(
-            client.reconnect,
-            throwsA(
-              isA<PusherChannelsClientDisposedException>(),
-            ),
-          );
-          expect(
-            client.dispose,
-            throwsA(
-              isA<PusherChannelsClientDisposedException>(),
-            ),
-          );
+  group('dart_pusher_channels client integration test', () {
+    test('Lifecycle states execution order', () async {
+      final connectionMetrics = _ConnectionMetrics();
+      connectionMetrics.expectMetricsAreDefault();
+      PseudoConnection pseudoConnection = PseudoConnection();
+      final client = PusherChannelsClient.custom(
+        connectionDelegate: () => pseudoConnection = PseudoConnection(),
+        connectionErrorHandler: (exception, trace, refresh) {
+          refresh();
         },
       );
-    },
-  );
+      client.lifecycleStream.listen((event) {
+        print(event);
+        switch (event) {
+          case PusherChannelsClientLifeCycleState.connectionError:
+            connectionMetrics.connectionErrorsCount++;
+            break;
+          case PusherChannelsClientLifeCycleState.disconnected:
+            connectionMetrics.disconnectsCount++;
+            break;
+          case PusherChannelsClientLifeCycleState.disposed:
+            connectionMetrics.connectionDisposionsCount++;
+            break;
+          case PusherChannelsClientLifeCycleState.gotPusherError:
+            connectionMetrics.pushErrorsCount++;
+            break;
+          case PusherChannelsClientLifeCycleState.establishedConnection:
+            connectionMetrics.connectionsCount++;
+            break;
+          case PusherChannelsClientLifeCycleState.pendingConnection:
+            connectionMetrics.connectionPendingsCount++;
+            break;
+          case PusherChannelsClientLifeCycleState.reconnecting:
+            connectionMetrics.reconnectsCount++;
+            break;
+          case PusherChannelsClientLifeCycleState.inactive:
+            connectionMetrics.connectionInactivesCount++;
+            break;
+        }
+      });
+      unawaited(client.connect());
+      // waiting for PusherChannelsClientLifeCycleState.pendingConnection status to be registered
+      await _passEventInEventLoop();
+      await client.getConnectionCompleterFuture();
+      // waiting for PusherChannelsClientLifeCycleState.establishedConnection to be registered
+      await _passEventInEventLoop();
+      expect(connectionMetrics.connectionsCount, 1);
+      unawaited(client.reconnect());
+      // waiting for PusherChannelsClientLifeCycleState.reconnecting to be registered
+      await _passEventInEventLoop();
+      expect(connectionMetrics.reconnectsCount, 1);
+      await client.getConnectionCompleterFuture();
+      // waiting for PusherChannelsClientLifeCycleState.pendingConnection to be registered
+      await _passEventInEventLoop();
+      expect(connectionMetrics.connectionPendingsCount, 2);
+      // waiting for PusherChannelsClientLifeCycleState.establishedConnection to be registered
+      await _passEventInEventLoop();
+      expect(connectionMetrics.connectionsCount, 2);
+      pseudoConnection.addError();
+      // waiting for error added to the stream
+      await _passEventInEventLoop();
+      // waiting for PusherChannelsClientLifeCycleState.onConnectionError to be registered
+      await _passEventInEventLoop();
+      expect(connectionMetrics.connectionErrorsCount, 1);
+      client.dispose();
+      // waiting for PusherChannelsClientLifeCycleState.reconnect to be registered
+      await _passEventInEventLoop();
+      // waiting for PusherChannelsClientLifeCycleState.disposed to be registered
+      await _passEventInEventLoop();
+      expect(connectionMetrics.connectionDisposionsCount, 1);
+      await expectLater(
+        client.connect,
+        throwsA(isA<PusherChannelsClientDisposedException>()),
+      );
+      await expectLater(
+        client.disconnect,
+        throwsA(isA<PusherChannelsClientDisposedException>()),
+      );
+      await expectLater(
+        client.reconnect,
+        throwsA(isA<PusherChannelsClientDisposedException>()),
+      );
+      expect(
+        client.dispose,
+        throwsA(isA<PusherChannelsClientDisposedException>()),
+      );
+    });
+  });
 }
 
 Future<void> _passEventInEventLoop() async {}

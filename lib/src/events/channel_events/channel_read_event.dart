@@ -11,35 +11,27 @@ class ChannelReadEvent extends PusherChannelsReadEvent {
   @protected
   final Channel channel;
 
-  ChannelReadEvent._({
-    required Map<String, dynamic> rootObject,
-    required this.channel,
-  }) : super(rootObject: rootObject);
+  ChannelReadEvent._({required super.rootObject, required this.channel});
 
   @internal
   factory ChannelReadEvent.internalCreate({
     required String name,
     required Channel channel,
     required Map<String, dynamic> data,
-  }) =>
-      ChannelReadEvent._(
-        rootObject: {
-          PusherChannelsEvent.eventNameKey: name,
-          PusherChannelsEvent.channelKey: channel.name,
-          PusherChannelsEvent.dataKey: _tryEncodeData(data),
-        },
-        channel: channel,
-      );
+  }) => ChannelReadEvent._(
+    rootObject: {
+      PusherChannelsEvent.eventNameKey: name,
+      PusherChannelsEvent.channelKey: channel.name,
+      PusherChannelsEvent.dataKey: _tryEncodeData(data),
+    },
+    channel: channel,
+  );
 
   @internal
   factory ChannelReadEvent.fromPusherChannelsReadEvent(
     Channel channel,
     PusherChannelsReadEvent readEvent,
-  ) =>
-      ChannelReadEvent._(
-        rootObject: readEvent.rootObject,
-        channel: channel,
-      );
+  ) => ChannelReadEvent._(rootObject: readEvent.rootObject, channel: channel);
 
   @internal
   factory ChannelReadEvent.forSubscriptionError(
@@ -62,10 +54,7 @@ class ChannelReadEvent extends PusherChannelsReadEvent {
 
   ChannelReadEvent copyWithName(String name) {
     return ChannelReadEvent._(
-      rootObject: {
-        ...rootObject,
-        PusherChannelsEvent.eventNameKey: name,
-      },
+      rootObject: {...rootObject, PusherChannelsEvent.eventNameKey: name},
       channel: channel,
     );
   }

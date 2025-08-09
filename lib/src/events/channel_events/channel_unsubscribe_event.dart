@@ -18,9 +18,7 @@ class ChannelUnsubscribeEvent
 
   final String channelName;
 
-  const ChannelUnsubscribeEvent({
-    required this.channelName,
-  });
+  const ChannelUnsubscribeEvent({required this.channelName});
 
   @override
   String getEncoded() {

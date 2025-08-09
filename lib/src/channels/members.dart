@@ -8,10 +8,7 @@ class MemberInfo {
   final String id;
   final Map<String, dynamic> info;
 
-  MemberInfo({
-    required this.id,
-    required this.info,
-  });
+  MemberInfo({required this.id, required this.info});
 }
 
 /// Delagetes the members changes in an instance of [Channel].
@@ -27,37 +24,24 @@ class ChannelMembers {
   @protected
   String? myId;
 
-  ChannelMembers({
-    required this.membersMap,
-    required this.myId,
-  });
+  ChannelMembers({required this.membersMap, required this.myId});
 
   /// Returns the instace containing data of the local user (client) only.
   factory ChannelMembers.onlyMe({
     required String myId,
     required Map<String, dynamic> myData,
-  }) =>
-      ChannelMembers(
-        membersMap: {
-          myId: MemberInfo(
-            id: myId,
-            info: {
-              ...myData,
-            },
-          ),
-        },
-        myId: myId,
-      );
+  }) => ChannelMembers(
+    membersMap: {
+      myId: MemberInfo(id: myId, info: {...myData}),
+    },
+    myId: myId,
+  );
 
   /// Gives a length of [membersMap].
   int get membersCount => membersMap.length;
 
-  static ChannelMembers? tryParseFromMap({
-    required Map<String, dynamic> data,
-  }) {
-    final hash = safeMessageToMapDeserializer(
-      data[_presenceKey]?[_hashKey],
-    );
+  static ChannelMembers? tryParseFromMap({required Map<String, dynamic> data}) {
+    final hash = safeMessageToMapDeserializer(data[_presenceKey]?[_hashKey]);
 
     if (hash == null) {
       return null;
@@ -65,10 +49,7 @@ class ChannelMembers {
 
     return ChannelMembers(
       membersMap: hash.map<String, MemberInfo?>(
-        (key, _) => MapEntry(
-          key,
-          null,
-        ),
+        (key, _) => MapEntry(key, null),
       ),
       myId: null,
     );
@@ -87,26 +68,15 @@ class ChannelMembers {
   MemberInfo? getMyMemberInfo() => myId == null ? null : getMemberInfo(myId!);
 
   @internal
-  void updateMember({
-    required String id,
-    required MemberInfo? info,
-  }) {
+  void updateMember({required String id, required MemberInfo? info}) {
     membersMap[id] = info;
   }
 
   @internal
-  void removeMember({
-    required String userId,
-  }) =>
-      membersMap.remove(
-        userId,
-      );
+  void removeMember({required String userId}) => membersMap.remove(userId);
 
   @internal
-  void updateMe({
-    required String id,
-    required MemberInfo? memberInfo,
-  }) {
+  void updateMe({required String id, required MemberInfo? memberInfo}) {
     myId = id;
     membersMap[myId!] = memberInfo;
   }
@@ -114,9 +84,6 @@ class ChannelMembers {
   /// Merges the old [membersMap] with the new one ([otherMap]).
   @internal
   void merge(Map<String, MemberInfo?> otherMap) {
-    membersMap = {
-      ...membersMap,
-      ...otherMap,
-    };
+    membersMap = {...membersMap, ...otherMap};
   }
 }

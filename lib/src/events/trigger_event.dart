@@ -22,8 +22,8 @@ class PusherChannelsTriggerEvent
 
   @override
   String getEncoded() => jsonEncode({
-        PusherChannelsEvent.eventNameKey: name,
-        if (channelName != null) PusherChannelsEvent.channelKey: channelName,
-        PusherChannelsEvent.dataKey: data,
-      });
+    PusherChannelsEvent.eventNameKey: name,
+    if (channelName != null) PusherChannelsEvent.channelKey: channelName,
+    PusherChannelsEvent.dataKey: data,
+  });
 }

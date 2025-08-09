@@ -61,7 +61,7 @@ class PusherChannelsClient {
     required Duration waitForPongDuration,
     required PusherChannelsConnectionDelegate connectionDelegate,
     required PusherChannelsClientLifeCycleConnectionErrorHandler
-        connectionErrorHandler,
+    connectionErrorHandler,
     required Duration minimumReconnectDelayDuration,
   }) {
     late final PusherChannelsClient client;
@@ -106,20 +106,19 @@ class PusherChannelsClient {
   factory PusherChannelsClient.custom({
     required PusherChannelsConnectionDelegate connectionDelegate,
     required PusherChannelsClientLifeCycleConnectionErrorHandler
-        connectionErrorHandler,
+    connectionErrorHandler,
     Duration minimumReconnectDelayDuration = const Duration(seconds: 1),
     Duration defaultActivityDuration = kPusherChannelsDefaultActivityDuration,
     Duration? activityDurationOverride,
     Duration waitForPongDuration = kPusherChannelsDefaultWaitForPongDuration,
-  }) =>
-      PusherChannelsClient._baseWithConnection(
-        minimumReconnectDelayDuration: minimumReconnectDelayDuration,
-        waitForPongDuration: waitForPongDuration,
-        activityDurationOverride: activityDurationOverride,
-        defaultActivityDuration: defaultActivityDuration,
-        connectionDelegate: connectionDelegate,
-        connectionErrorHandler: connectionErrorHandler,
-      );
+  }) => PusherChannelsClient._baseWithConnection(
+    minimumReconnectDelayDuration: minimumReconnectDelayDuration,
+    waitForPongDuration: waitForPongDuration,
+    activityDurationOverride: activityDurationOverride,
+    defaultActivityDuration: defaultActivityDuration,
+    connectionDelegate: connectionDelegate,
+    connectionErrorHandler: connectionErrorHandler,
+  );
 
   /// Providing a client with a delegate returning [PusherChannelsWebSocketConnection].
   /// Parameters:
@@ -133,22 +132,20 @@ class PusherChannelsClient {
   factory PusherChannelsClient.websocket({
     required PusherChannelsOptions options,
     required PusherChannelsClientLifeCycleConnectionErrorHandler
-        connectionErrorHandler,
+    connectionErrorHandler,
     Duration minimumReconnectDelayDuration = const Duration(seconds: 1),
     Duration defaultActivityDuration = kPusherChannelsDefaultActivityDuration,
     Duration? activityDurationOverride,
     Duration waitForPongDuration = kPusherChannelsDefaultWaitForPongDuration,
-  }) =>
-      PusherChannelsClient._baseWithConnection(
-        minimumReconnectDelayDuration: minimumReconnectDelayDuration,
-        waitForPongDuration: waitForPongDuration,
-        activityDurationOverride: activityDurationOverride,
-        defaultActivityDuration: defaultActivityDuration,
-        connectionDelegate: () => PusherChannelsWebSocketConnection(
-          uri: options.uri,
-        ),
-        connectionErrorHandler: connectionErrorHandler,
-      );
+  }) => PusherChannelsClient._baseWithConnection(
+    minimumReconnectDelayDuration: minimumReconnectDelayDuration,
+    waitForPongDuration: waitForPongDuration,
+    activityDurationOverride: activityDurationOverride,
+    defaultActivityDuration: defaultActivityDuration,
+    connectionDelegate: () =>
+        PusherChannelsWebSocketConnection(uri: options.uri),
+    connectionErrorHandler: connectionErrorHandler,
+  );
 
   /// Used to listen for all the events received from a server.
   Stream<PusherChannelsReadEvent> get eventStream => controller.eventStream
@@ -234,18 +231,18 @@ class PusherChannelsClient {
   PrivateEncryptedChannel privateEncryptedChannel(
     String channelName, {
     required EndpointAuthorizableChannelAuthorizationDelegate<
-            PrivateEncryptedChannelAuthorizationData>
-        authorizationDelegate,
+      PrivateEncryptedChannelAuthorizationData
+    >
+    authorizationDelegate,
     bool forceCreateNewInstance = false,
     PrivateEncryptedChannelEventDataEncodeDelegate eventDataEncodeDelegate =
         PrivateEncryptedChannel.defaultEventDataEncoder,
-  }) =>
-      channelsManager.privateEncryptedChannel(
-        channelName,
-        authorizationDelegate: authorizationDelegate,
-        forceCreateNewInstance: forceCreateNewInstance,
-        eventDataEncodeDelegate: eventDataEncodeDelegate,
-      );
+  }) => channelsManager.privateEncryptedChannel(
+    channelName,
+    authorizationDelegate: authorizationDelegate,
+    forceCreateNewInstance: forceCreateNewInstance,
+    eventDataEncodeDelegate: eventDataEncodeDelegate,
+  );
 
   /// Creates a public channel.
   ///
@@ -318,8 +315,9 @@ class PusherChannelsClient {
   PrivateChannel privateChannel(
     String channelName, {
     required EndpointAuthorizableChannelAuthorizationDelegate<
-            PrivateChannelAuthorizationData>
-        authorizationDelegate,
+      PrivateChannelAuthorizationData
+    >
+    authorizationDelegate,
     bool forceCreateNewInstance = false,
   }) {
     if (_isDisposed) {
@@ -369,8 +367,9 @@ class PusherChannelsClient {
   PresenceChannel presenceChannel(
     String channelName, {
     required EndpointAuthorizableChannelAuthorizationDelegate<
-            PresenceChannelAuthorizationData>
-        authorizationDelegate,
+      PresenceChannelAuthorizationData
+    >
+    authorizationDelegate,
     bool forceCreateNewInstance = false,
   }) {
     if (_isDisposed) {
@@ -413,9 +412,7 @@ class PusherChannelsClient {
     if (_isDisposed) {
       return;
     }
-    controller.triggerEvent(
-      event,
-    );
+    controller.triggerEvent(event);
   }
 
   /// Sends the [event] to a server.

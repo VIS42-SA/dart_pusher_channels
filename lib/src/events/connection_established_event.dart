@@ -30,18 +30,15 @@ class PusherChannelsConnectionEstablishedEvent
 
   String get socketId => deserializedMapData[_socketIdKey].toString();
   @protected
-  int? get activityTimeoutInSeconds => int.tryParse(
-        deserializedMapData[_activityTimeoutKey]?.toString() ?? '',
-      );
+  int? get activityTimeoutInSeconds =>
+      int.tryParse(deserializedMapData[_activityTimeoutKey]?.toString() ?? '');
 
   Duration? get activityTimeoutDuration {
     final seconds = activityTimeoutInSeconds;
     if (seconds == null) {
       return null;
     }
-    return Duration(
-      seconds: seconds,
-    );
+    return Duration(seconds: seconds);
   }
 
   static PusherChannelsConnectionEstablishedEvent? tryParseFromDynamic(

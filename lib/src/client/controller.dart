@@ -12,14 +12,10 @@ import 'package:dart_pusher_channels/src/utils/logger.dart';
 import 'package:meta/meta.dart';
 
 typedef PusherChannelsConnectionDelegate = PusherChannelsConnection Function();
-typedef PusherChannelsClientLifeCycleConnectionErrorHandler = void Function(
-  dynamic exception,
-  StackTrace trace,
-  void Function() refresh,
-);
-typedef PusherChannelsClientLifeCycleEventHandler = void Function(
-  PusherChannelsEvent event,
-);
+typedef PusherChannelsClientLifeCycleConnectionErrorHandler =
+    void Function(dynamic exception, StackTrace trace, void Function() refresh);
+typedef PusherChannelsClientLifeCycleEventHandler =
+    void Function(PusherChannelsEvent event);
 
 typedef _TimeoutHandler = void Function();
 
@@ -76,12 +72,12 @@ class PusherChannelsClientLifeCycleController {
   final StreamController<PusherChannelsEvent> _eventsController =
       StreamController.broadcast();
   final StreamController<PusherChannelsClientLifeCycleState>
-      _lifeCycleStateController = StreamController.broadcast();
+  _lifeCycleStateController = StreamController.broadcast();
 
   /// Called when a connection error is thrown.
   @protected
   final PusherChannelsClientLifeCycleConnectionErrorHandler
-      connectionErrorHandler;
+  connectionErrorHandler;
 
   /// Called to inject an instance of [PusherChannelsConnection] into a controller while
   /// performing connection.
@@ -157,9 +153,7 @@ class PusherChannelsClientLifeCycleController {
   /// 4. Closes current connection.
   /// 5. Re-establishes connection.
   Future<void> connectSafely() {
-    return _connect(
-      shouldReInitCompleter: true,
-    );
+    return _connect(shouldReInitCompleter: true);
   }
 
   /// Disconnects from the current connection.
@@ -255,9 +249,7 @@ class PusherChannelsClientLifeCycleController {
       return;
     }
     try {
-      _connection?.sendEvent(
-        event.getEncoded(),
-      );
+      _connection?.sendEvent(event.getEncoded());
     } catch (exception, trace) {
       PusherChannelsPackageLogger.log(
         'Failed to send an event "${event.name}" because "$exception" was thrown. Stacktrace:\n $trace',
@@ -282,9 +274,7 @@ class PusherChannelsClientLifeCycleController {
       return;
     }
 
-    return _connect(
-      shouldReInitCompleter: false,
-    );
+    return _connect(shouldReInitCompleter: false);
   }
 
   void _changeLifeCycleState(PusherChannelsClientLifeCycleState newState) {
@@ -296,9 +286,7 @@ class PusherChannelsClientLifeCycleController {
     }
 
     _currentLifeCycleState = newState;
-    _lifeCycleStateController.add(
-      _currentLifeCycleState,
-    );
+    _lifeCycleStateController.add(_currentLifeCycleState);
     PusherChannelsPackageLogger.log(
       'Current lifecycle state: $_currentLifeCycleState',
     );
@@ -310,9 +298,7 @@ class PusherChannelsClientLifeCycleController {
     }
   }
 
-  void _shouldReconnectOnDone({
-    required int fixatedLifeCycleCount,
-  }) {
+  void _shouldReconnectOnDone({required int fixatedLifeCycleCount}) {
     if (fixatedLifeCycleCount < _currentLifeCycleCount || _isDisposed) {
       return;
     }
@@ -332,15 +318,11 @@ class PusherChannelsClientLifeCycleController {
     if (fixatedLifeCycleCount < _currentLifeCycleCount || _isDisposed) {
       return;
     } else {
-      _changeLifeCycleState(
-        PusherChannelsClientLifeCycleState.connectionError,
-      );
+      _changeLifeCycleState(PusherChannelsClientLifeCycleState.connectionError);
       connectionErrorHandler(
         exception,
         trace,
-        () => unawaited(
-          reconnectSafely(),
-        ),
+        () => unawaited(reconnectSafely()),
       );
       _completeSafely();
     }
@@ -358,9 +340,7 @@ class PusherChannelsClientLifeCycleController {
   /// Replies with the pong message if received the
   /// ping message from a server
   void _replyWithPong() {
-    _sendEvent(
-      const PusherChannelsPongEvent(),
-    );
+    _sendEvent(const PusherChannelsPongEvent());
   }
 
   /// Sends the ping messages and resets the timeout duration
@@ -370,10 +350,7 @@ class PusherChannelsClientLifeCycleController {
       'Performing ping, waiting for pong for $waitForPongDuration',
     );
     _connection?.ping();
-    _setTimer(
-      duration: waitForPongDuration,
-      timeoutHandler: _reconnect,
-    );
+    _setTimer(duration: waitForPongDuration, timeoutHandler: _reconnect);
   }
 
   void _setTimer({
@@ -399,20 +376,16 @@ class PusherChannelsClientLifeCycleController {
     if (fixatedLifeCycleCount < _currentLifeCycleCount || _isDisposed) {
       return;
     }
-    PusherChannelsPackageLogger.log(
-      'Received an event: $event',
-    );
-    final pusherEvent = _internalEventFactory(event) ??
+    PusherChannelsPackageLogger.log('Received an event: $event');
+    final pusherEvent =
+        _internalEventFactory(event) ??
         PusherChannelsReadEvent.tryParseFromDynamic(event);
     if (pusherEvent is PusherChannelsConnectionEstablishedEvent) {
       _establishConnectionParameters(
         pusherEvent.socketId,
         pusherEvent.activityTimeoutDuration,
       );
-      _setTimer(
-        duration: _getActivityDuration(),
-        timeoutHandler: _performPing,
-      );
+      _setTimer(duration: _getActivityDuration(), timeoutHandler: _performPing);
       _changeLifeCycleState(
         PusherChannelsClientLifeCycleState.establishedConnection,
       );
@@ -420,10 +393,7 @@ class PusherChannelsClientLifeCycleController {
       _changeLifeCycleState(PusherChannelsClientLifeCycleState.gotPusherError);
     } else if (pusherEvent is PusherChannelsPongEvent || pusherEvent != null) {
       PusherChannelsPackageLogger.log('Got an event, continuing activity');
-      _setTimer(
-        duration: _getActivityDuration(),
-        timeoutHandler: _performPing,
-      );
+      _setTimer(duration: _getActivityDuration(), timeoutHandler: _performPing);
     }
 
     if (pusherEvent is PusherChannelsPingEvent) {
@@ -442,12 +412,8 @@ class PusherChannelsClientLifeCycleController {
     return PusherChannelsConnectionEstablishedEvent.tryParseFromDynamic(
           event,
         ) ??
-        PusherChannelsErrorEvent.tryParseFromDynamic(
-          event,
-        ) ??
-        PusherChannelsPongEvent.tryParseFromDynamic(
-          event,
-        ) ??
+        PusherChannelsErrorEvent.tryParseFromDynamic(event) ??
+        PusherChannelsPongEvent.tryParseFromDynamic(event) ??
         PusherChannelsPingEvent.tryParseFromDynamic(event);
   }
 

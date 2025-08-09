@@ -14,10 +14,7 @@ mixin TriggerableChannelMixin<T extends ChannelState> on Channel<T> {
   /// that will be encoded within the root object in [PusherChannelsSentEventMixin.getEncoded].
   ///
   /// See the implementation of: [ChannelTriggerEvent].
-  void trigger({
-    required String eventName,
-    required dynamic data,
-  }) {
+  void trigger({required String eventName, required dynamic data}) {
     final event = ChannelTriggerEvent(
       channel: this,
       name: eventName,

@@ -1,5 +1,5 @@
 /// Internal exports of the Public API
-library dart_pusher_channels_exports;
+library;
 
 // options
 export 'options/options.dart';

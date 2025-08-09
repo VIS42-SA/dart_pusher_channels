@@ -1,4 +1,4 @@
-part of pusher_channels_options;
+part of 'options.dart';
 
 @immutable
 class _ClusteredOptions with PusherChannelsOptions, _QuerySupplyMixin {
@@ -25,12 +25,12 @@ class _ClusteredOptions with PusherChannelsOptions, _QuerySupplyMixin {
 
   @override
   Uri get uri => Uri(
-        scheme: scheme,
-        port: port,
-        host: _host,
-        path: _path,
-        queryParameters: queryParameters,
-      );
+    scheme: scheme,
+    port: port,
+    host: _host,
+    path: _path,
+    queryParameters: queryParameters,
+  );
 
   String get _host => 'ws-$cluster.$host';
 
